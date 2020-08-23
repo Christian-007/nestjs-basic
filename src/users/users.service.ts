@@ -19,7 +19,7 @@ export class UsersService {
     return this.usersRepository.findOne(id);
   }
 
-  async create(newUser: CreateUserDto): Promise<User> {
+  create(newUser: CreateUserDto): Promise<User> {
     const user = new User();
     user.firstName = newUser.firstName;
     user.lastName = newUser.lastName;
