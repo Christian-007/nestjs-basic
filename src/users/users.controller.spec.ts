@@ -1,18 +1,51 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import * as faker from 'faker';
+
 import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
+import { User } from './user.entity';
 
 describe('Users Controller', () => {
-  let controller: UsersController;
+  let userController: UsersController;
+  let usersService: UsersService;
 
   beforeEach(async () => {
+    const mockUsersService = {
+      findAll: jest.fn(),
+      create: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
+      providers: [{ provide: UsersService, useValue: mockUsersService }],
     }).compile();
 
-    controller = module.get<UsersController>(UsersController);
+    userController = module.get<UsersController>(UsersController);
+    usersService = module.get<UsersService>(UsersService);
   });
 
   it('should be defined', () => {
-    expect(controller).toBeDefined();
+    expect(userController).toBeDefined();
+  });
+
+  it('should return all users when userController.findAll() is called', async () => {
+    const mockUserList: User[] = [
+      {
+        id: faker.random.number(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        isActive: faker.random.boolean(),
+      },
+      {
+        id: faker.random.number(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        isActive: faker.random.boolean(),
+      },
+    ];
+
+    jest.spyOn(usersService, 'findAll').mockResolvedValue(mockUserList);
+
+    expect(await userController.findAll()).toBe(mockUserList);
   });
 });
