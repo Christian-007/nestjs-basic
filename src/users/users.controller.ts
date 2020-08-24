@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 
 import { UsersService } from './users.service';
 import { GetUserDto } from './dto/get-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { FindOneParams } from './param/find-one.params';
 
 @Controller('users')
 export class UsersController {
@@ -12,6 +13,12 @@ export class UsersController {
   async findAll(): Promise<GetUserDto[]> {
     const users = await this.usersService.findAll();
     return users;
+  }
+
+  @Get(':id')
+  async findOne(@Param() params: FindOneParams): Promise<GetUserDto> {
+    const user = await this.usersService.findOne(params.id);
+    return user;
   }
 
   @Post()
