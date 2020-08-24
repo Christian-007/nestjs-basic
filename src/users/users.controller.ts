@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 
 import { UsersService } from './users.service';
 import { GetUserDto } from './dto/get-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { FindOneParams } from './param/find-one.params';
+import { RemoveParams } from './param/remove.params';
+import { RemoveUserDto } from './dto/remove-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -32,5 +34,15 @@ export class UsersController {
     };
 
     return userDto;
+  }
+
+  @Delete(':id')
+  async remove(@Param() params: RemoveParams): Promise<RemoveUserDto> {
+    await this.usersService.remove(params.id);
+    const removeUserDto: RemoveUserDto = {
+      message: 'OK',
+    };
+
+    return removeUserDto;
   }
 }
