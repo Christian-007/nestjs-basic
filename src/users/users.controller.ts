@@ -13,7 +13,6 @@ import { GetUserDto } from './dto/get-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { FindOneParams } from './param/find-one.params';
 import { RemoveParams } from './param/remove.params';
-import { RemoveUserDto } from './dto/remove-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
@@ -46,13 +45,8 @@ export class UsersController {
   }
 
   @Delete(':id')
-  async remove(@Param() params: RemoveParams): Promise<RemoveUserDto> {
+  async remove(@Param() params: RemoveParams): Promise<void> {
     await this.usersService.remove(params.id);
-    const removeUserDto: RemoveUserDto = {
-      message: 'OK',
-    };
-
-    return removeUserDto;
   }
 
   @Patch(':id')
