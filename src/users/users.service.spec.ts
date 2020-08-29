@@ -5,6 +5,7 @@ import * as faker from 'faker';
 
 import { UsersService } from './users.service';
 import { User } from './user.entity';
+import { CreateUserDto } from './dto/create-user.dto';
 
 describe('UsersService', () => {
   let usersService: UsersService;
@@ -54,5 +55,37 @@ describe('UsersService', () => {
     jest.spyOn(usersRepository, 'find').mockResolvedValue(mockUserList);
 
     expect(await usersService.findAll()).toBe(mockUserList);
+  });
+
+  it('should call usersRepository.findOne(id) when usersService.findOne(id) is called', async () => {
+    const mockUserId = faker.random.uuid();
+
+    const findOneSpy = jest.spyOn(usersRepository, 'findOne');
+    await usersService.findOne(mockUserId);
+
+    expect(findOneSpy).toHaveBeenCalledWith(mockUserId);
+  });
+
+  it('should call usersRepository.save(user) when usersService.create(user) is called', async () => {
+    const mockCreateUserDto: CreateUserDto = {
+      firstName: faker.name.firstName(),
+      lastName: faker.name.lastName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+    };
+
+    const saveSpy = jest.spyOn(usersRepository, 'save');
+    await usersService.create(mockCreateUserDto);
+
+    expect(saveSpy).toBeCalledWith(mockCreateUserDto);
+  });
+
+  it('should call usersRepository.delete(id) when usersService.remove(id) is called', async () => {
+    const mockUserId = faker.random.uuid();
+
+    const deleteSpy = jest.spyOn(usersRepository, 'delete');
+    await usersService.remove(mockUserId);
+
+    expect(deleteSpy).toHaveBeenCalledWith(mockUserId);
   });
 });
