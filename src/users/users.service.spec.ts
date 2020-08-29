@@ -36,16 +36,18 @@ describe('UsersService', () => {
   it('should call usersRepository.find() when usersService.findAll() is called', async () => {
     const mockUserList: User[] = [
       {
-        id: faker.random.number(),
+        id: faker.random.uuid(),
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
-        isActive: faker.random.boolean(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
       },
       {
-        id: faker.random.number(),
+        id: faker.random.uuid(),
         firstName: faker.name.firstName(),
         lastName: faker.name.lastName(),
-        isActive: faker.random.boolean(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
       },
     ];
 
