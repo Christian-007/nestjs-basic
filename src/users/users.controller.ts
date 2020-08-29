@@ -36,9 +36,9 @@ export class UsersController {
     const user = await this.usersService.create(newUser);
     const userDto: GetUserDto = {
       id: user.id,
+      email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
-      isActive: user.isActive,
     };
 
     return userDto;
@@ -55,6 +55,13 @@ export class UsersController {
     @Body() user: UpdateUserDto,
   ): Promise<GetUserDto> {
     const updatedUser = await this.usersService.update(params.id, user);
-    return updatedUser;
+    const userDto: GetUserDto = {
+      id: updatedUser.id,
+      email: updatedUser.email,
+      firstName: updatedUser.firstName,
+      lastName: updatedUser.lastName,
+    };
+
+    return userDto;
   }
 }

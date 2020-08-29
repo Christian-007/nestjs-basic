@@ -1,6 +1,6 @@
 export class GetUserDto {
-  id: number;
+  id: string;
+  email: string;
   firstName: string;
   lastName: string;
-  isActive: boolean;
 }

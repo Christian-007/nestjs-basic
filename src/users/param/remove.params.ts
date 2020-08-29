@@ -1,3 +1,6 @@
+import { IsUUID } from 'class-validator';
+
 export class RemoveParams {
-  id: number;
+  @IsUUID()
+  id: string;
 }
