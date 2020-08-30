@@ -1,10 +1,16 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { MysqlErrorCode } from 'src/shared/enums/mysql.enum';
 
 @Injectable()
 export class UsersService {
@@ -16,18 +22,44 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
-  findOne(id: string): Promise<User> {
-    return this.usersRepository.findOne(id);
+  async findOne(id: string): Promise<User> {
+    const user = this.usersRepository.findOne(id);
+    if (user) {
+      return user;
+    }
+
+    throw new HttpException('User does not exist!', HttpStatus.NOT_FOUND);
   }
 
-  create(newUser: CreateUserDto): Promise<User> {
+  async findOneByEmail(email: string): Promise<User> {
+    const user = await this.usersRepository.findOne({ email });
+    if (user) {
+      return user;
+    }
+
+    throw new HttpException('User does not exist!', HttpStatus.NOT_FOUND);
+  }
+
+  async create(newUser: CreateUserDto): Promise<User> {
     const user = new User();
     user.email = newUser.email;
     user.firstName = newUser.firstName;
     user.lastName = newUser.lastName;
     user.password = newUser.password;
 
-    return this.usersRepository.save(user);
+    try {
+      const createdUser = await this.usersRepository.save(user);
+      return createdUser;
+    } catch (error) {
+      if (error?.code === MysqlErrorCode.DuplicateEntry) {
+        throw new HttpException(
+          'User with that email already exists.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      throw new InternalServerErrorException();
+    }
   }
 
   async remove(id: string): Promise<void> {

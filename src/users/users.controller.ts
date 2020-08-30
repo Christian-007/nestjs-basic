@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 
 import { UsersService } from './users.service';
@@ -14,12 +15,14 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { FindOneParams } from './param/find-one.params';
 import { RemoveParams } from './param/remove.params';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async findAll(): Promise<GetUserDto[]> {
     const users = await this.usersService.findAll();
     return users;
