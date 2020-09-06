@@ -57,13 +57,20 @@ describe('UsersService', () => {
     expect(await usersService.findAll()).toBe(mockUserList);
   });
 
-  it('should call usersRepository.findOne(id) when usersService.findOne(id) is called', async () => {
+  it('should return founded User when usersService.findOne(id) is called', async () => {
     const mockUserId = faker.random.uuid();
+    const mockUser: User = {
+      id: mockUserId,
+      firstName: faker.name.firstName(),
+      lastName: faker.name.lastName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+    };
 
-    const findOneSpy = jest.spyOn(usersRepository, 'findOne');
-    await usersService.findOne(mockUserId);
+    jest.spyOn(usersRepository, 'findOne').mockResolvedValue(mockUser);
+    const result = await usersService.findOne(mockUserId);
 
-    expect(findOneSpy).toHaveBeenCalledWith(mockUserId);
+    expect(result).toBe(mockUser);
   });
 
   it('should call usersRepository.save(user) when usersService.create(user) is called', async () => {
