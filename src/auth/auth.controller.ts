@@ -6,6 +6,8 @@ import {
   UseGuards,
   Req,
   Get,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 
 import { User } from 'src/users/user.entity';
@@ -17,6 +19,7 @@ import { RequestWithUser } from './interfaces/request-with-user.interface';
 import { AccessToken } from './interfaces/token.interface';
 
 @Controller('auth')
+@UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(private authService: AuthService) {}
 
