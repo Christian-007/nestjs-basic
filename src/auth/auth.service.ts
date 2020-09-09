@@ -9,6 +9,7 @@ import { hash, compare } from 'bcrypt';
 
 import { User } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';
+import { MysqlErrorCode } from 'src/shared/enums/mysql.enum';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { TokenPayload } from './interfaces/token-payload.interface';
 import { AccessToken } from './interfaces/token.interface';
@@ -29,10 +30,15 @@ export class AuthService {
         ...registerUserDto,
         password: hashedPassword,
       });
-      createdUser.password = undefined;
-
       return createdUser;
     } catch (error) {
+      if (error?.code === MysqlErrorCode.DuplicateEntry) {
+        throw new HttpException(
+          'User with that email already exists.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       throw new InternalServerErrorException();
     }
   }
